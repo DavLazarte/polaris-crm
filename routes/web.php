@@ -84,16 +84,106 @@ Route::post('/contacto/enviar', function (Request $request) {
         'message' => $data['mensaje'] ?? null,
     ]);
 
+    $subject = "Nueva consulta web: " . $message->name . ($message->organizacion ? " (" . $message->organizacion . ")" : "");
+    $sent = false;
+
+    // 1. Intento con Laravel Mailer (SMTP / Sendmail según .env)
     try {
-        Mail::send('emails.contact', ['msg' => $message], function ($m) use ($message) {
+        Mail::send('emails.contact', ['msg' => $message], function ($m) use ($message, $subject) {
             $m->to('info@polariscg.com.ar')
-              ->subject('Nuevo mensaje web: ' . $message->name);
+              ->cc(['carolina@polariscg.com.ar', 'andres@polariscg.com.ar']);
+
+            if (!empty($message->email) && filter_var($message->email, FILTER_VALIDATE_EMAIL)) {
+                $m->replyTo($message->email, $message->name);
+            }
+
+            $m->subject($subject);
         });
-    } catch (\Exception $e) {
-        \Log::error('Error enviando email: ' . $e->getMessage());
+        $sent = true;
+    } catch (\Throwable $e) {
+        \Log::warning('Fallo envio con Laravel Mailer: ' . $e->getMessage() . '. Intentando fallback directo mail() de PHP...');
+    }
+
+    // 2. Fallback nativo mail() de PHP (método exacto de send_mail.php compatible 100% con Ferozo/DonWeb)
+    if (!$sent) {
+        try {
+            $cuerpoHTML = view('emails.contact', ['msg' => $message])->render();
+            $asunto_codificado = "=?UTF-8?B?" . base64_encode($subject) . "?=";
+            
+            $cabeceras = "MIME-Version: 1.0\r\n";
+            $cabeceras .= "Content-Type: text/html; charset=UTF-8\r\n";
+            $cabeceras .= "From: Polaris Web Form <no-reply@polariscg.com.ar>\r\n";
+            if (!empty($message->email) && filter_var($message->email, FILTER_VALIDATE_EMAIL)) {
+                $cabeceras .= "Reply-To: " . $message->name . " <" . $message->email . ">\r\n";
+            }
+            $cabeceras .= "Cc: carolina@polariscg.com.ar, andres@polariscg.com.ar\r\n";
+            $cabeceras .= "X-Mailer: PHP/" . phpversion() . "\r\n";
+
+            $nativeOk = @mail('info@polariscg.com.ar', $asunto_codificado, $cuerpoHTML, $cabeceras);
+            if ($nativeOk) {
+                \Log::info('Correo enviado exitosamente con mail() nativo (fallback Ferozo).');
+            } else {
+                \Log::error('Fallo el envio tambien con mail() nativo.');
+            }
+        } catch (\Throwable $fallbackEx) {
+            \Log::error('Excepcion en fallback mail(): ' . $fallbackEx->getMessage());
+        }
     }
 
     return response()->json(['success' => true]);
+});
+
+// Diagnostico de correo en produccion
+Route::get('/polaris-test-mail/{token}', function ($token) {
+    if ($token !== 'polaris2026') {
+        abort(403, 'Acceso no autorizado.');
+    }
+
+    $dummy = (object) [
+        'name' => 'Prueba de Sistema',
+        'organizacion' => 'Polaris Verification',
+        'email' => 'info@polariscg.com.ar',
+        'pais' => 'Argentina',
+        'intereses' => 'Prueba de envio de correos',
+        'message' => 'Este es un correo de prueba enviado desde polaris-test-mail para verificar la recepcion en las 3 casillas.',
+    ];
+
+    $log = [];
+    $subject = "Prueba de correo Polaris: " . date('Y-m-d H:i:s');
+
+    // Test Laravel Mail
+    try {
+        Mail::send('emails.contact', ['msg' => $dummy], function ($m) use ($dummy, $subject) {
+            $m->to('info@polariscg.com.ar')
+              ->cc(['carolina@polariscg.com.ar', 'andres@polariscg.com.ar'])
+              ->subject($subject);
+        });
+        $log[] = "✅ Laravel Mailer: Envío exitoso a info@, carolina@ y andres@";
+    } catch (\Throwable $e) {
+        $log[] = "⚠️ Laravel Mailer falló: " . $e->getMessage();
+        
+        // Test mail() nativo
+        try {
+            $cuerpoHTML = view('emails.contact', ['msg' => $dummy])->render();
+            $asunto_codificado = "=?UTF-8?B?" . base64_encode($subject) . "?=";
+            $cabeceras = "MIME-Version: 1.0\r\n";
+            $cabeceras .= "Content-Type: text/html; charset=UTF-8\r\n";
+            $cabeceras .= "From: Polaris Web Form <no-reply@polariscg.com.ar>\r\n";
+            $cabeceras .= "Cc: carolina@polariscg.com.ar, andres@polariscg.com.ar\r\n";
+            $cabeceras .= "X-Mailer: PHP/" . phpversion() . "\r\n";
+
+            $res = @mail('info@polariscg.com.ar', $asunto_codificado, $cuerpoHTML, $cabeceras);
+            if ($res) {
+                $log[] = "✅ Fallback mail() nativo: Envío exitoso a info@, carolina@ y andres@";
+            } else {
+                $log[] = "❌ Fallback mail() nativo falló.";
+            }
+        } catch (\Throwable $ex) {
+            $log[] = "❌ Excepción en mail() nativo: " . $ex->getMessage();
+        }
+    }
+
+    return response('<pre style="background:#000412; color:#74acdf; padding:24px; font-family:monospace; font-size:14px; border-radius:10px;">' . implode("\n\n", $log) . '</pre>');
 });
 
 // Helper de deploy para Ferozo (ejecutar migraciones, storage:link y cache en hosting sin SSH)
