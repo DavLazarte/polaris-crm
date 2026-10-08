@@ -101,6 +101,42 @@
         #nav.solid .lang-drop-menu a.active {
             color: var(--blue);
         }
+
+        /* Botón de acceso Admin en el Navbar */
+        .nav-admin-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 0.68rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 7px 12px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        .nav-admin-btn:hover {
+            background: rgba(116, 172, 223, 0.25);
+            border-color: var(--sky);
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(116, 172, 223, 0.25);
+        }
+        #nav.solid .nav-admin-btn {
+            background: rgba(0, 4, 18, 0.04);
+            border-color: rgba(0, 4, 18, 0.15);
+            color: var(--navy);
+        }
+        #nav.solid .nav-admin-btn:hover {
+            background: #000412;
+            border-color: #000412;
+            color: #ffffff;
+        }
     </style>
     @stack('styles')
 </head>
@@ -149,6 +185,13 @@
                 </a>
             </div>
         </div>
+        <a href="{{ url('/admin') }}" class="nav-admin-btn" title="{{ __('Acceso Administrador') }}" target="_blank">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <span>Admin</span>
+        </a>
         <a href="{{ route('contacto') }}" class="nav-cta">{{ __('Hablemos') }}</a>
     </div>
 </nav>
@@ -196,6 +239,10 @@
         <div class="footer-legal">
             <a href="#">{{ __('Privacidad') }}</a>
             <a href="#">{{ __('Términos') }}</a>
+            <a href="{{ url('/admin') }}" target="_blank" style="color: rgba(255,255,255,0.45); display: inline-flex; align-items: center; gap: 4px; text-decoration: none;">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                <span>{{ __('Panel Admin') }}</span>
+            </a>
         </div>
     </div>
 </footer>

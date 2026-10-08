@@ -1,5 +1,83 @@
 @extends('layouts.app')
 @section('title', __('Polaris Cooperation Group | Consultoría Estratégica Global'))
+
+@push('styles')
+<style>
+    /* ── MODAL ARTÍCULO EN HOME ──────────────────────────────────── */
+    .article-modal-overlay {
+        position: fixed; inset: 0;
+        background: rgba(0, 4, 18, 0.78);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 99999;
+        display: flex; align-items: center; justify-content: center;
+        padding: 24px;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .article-modal-overlay.open {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: all;
+    }
+    .article-modal {
+        background: white;
+        color: #0b1626;
+        border-radius: 20px;
+        max-width: 780px; width: 100%;
+        max-height: 88vh;
+        overflow-y: auto;
+        padding: 44px 50px;
+        position: relative;
+        transform: translateY(20px) scale(0.98);
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 30px 80px rgba(0,0,0,0.35);
+    }
+    .article-modal-overlay.open .article-modal {
+        transform: translateY(0) scale(1);
+    }
+    .modal-close {
+        position: absolute; top: 24px; right: 24px;
+        background: #f1f5f9; border: 1.5px solid #e2e8f0;
+        width: 38px; height: 38px; border-radius: 50%;
+        cursor: pointer; font-size: 1.1rem; line-height: 1;
+        display: flex; align-items: center; justify-content: center;
+        color: #0b1626; transition: all 0.25s;
+    }
+    .modal-close:hover { background: #000412; color: white; border-color: #000412; }
+    .modal-cat {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.65rem; font-weight: 800;
+        letter-spacing: 0.2em; text-transform: uppercase;
+        color: var(--blue); margin-bottom: 12px;
+    }
+    .modal-title {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 900; font-size: clamp(1.4rem, 2.5vw, 2rem);
+        color: #000412; line-height: 1.25;
+        margin-bottom: 14px;
+    }
+    .modal-date {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.65rem; font-weight: 600;
+        letter-spacing: 0.1em; color: #94a3b8;
+        margin-bottom: 28px; padding-bottom: 18px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .modal-body {
+        font-size: 0.95rem; font-weight: 300;
+        color: #334155; line-height: 1.85;
+    }
+    .modal-body p { margin-bottom: 20px; }
+    .modal-body a { color: var(--blue); font-weight: 600; text-decoration: underline; }
+    @media (max-width: 680px) {
+        .article-modal { padding: 30px 22px; }
+    }
+</style>
+@endpush
+
 @section('content')
 
 <!-- ════════════════════════════════════════════════════════════════
@@ -428,9 +506,23 @@
             <a href="{{ route('news') }}" style="font-family:Montserrat; font-weight:700; font-size:0.7rem; letter-spacing:0.14em; text-transform:uppercase; text-decoration:none; color:var(--blue); white-space:nowrap; display:flex; align-items:center; gap:8px; transition:gap 0.3s;" onmouseover="this.style.gap='14px'" onmouseout="this.style.gap='8px'">{!! __('Ver todas →') !!}</a>
         </div>
 
+@php
+$homeArticlesData = $latestArticles->map(function($a) {
+    return [
+        'id' => $a->id,
+        'slug' => $a->slug,
+        'category' => (string) $a->category,
+        'title' => (string) $a->title,
+        'date' => \Carbon\Carbon::parse($a->published_at)->translatedFormat("j \d\e F, Y"),
+        'excerpt' => (string) $a->excerpt,
+        'body' => (string) $a->body,
+    ];
+})->values();
+@endphp
+
         <div class="news-grid">
             @forelse($latestArticles as $article)
-                <a href="{{ route('news', ['article' => $article->slug]) }}" class="news-card">
+                <article class="news-card" onclick="openHomeArticle({{ $article->id }})" style="cursor: pointer;">
                     <div class="news-thumb">
                         @if($article->img)
                             <img src="{{ Storage::url($article->img) }}" alt="{{ $article->title }}" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;">
@@ -444,9 +536,12 @@
                         <span class="news-cat">{{ $article->category }}</span>
                         <h3 class="news-title">{{ $article->title }}</h3>
                         <p class="news-expt">{{ $article->excerpt }}</p>
-                        <span class="news-date">{{ \Carbon\Carbon::parse($article->published_at)->translatedFormat('j \d\e F, Y') }}</span>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; padding-top:12px; border-top:1px solid #f1f5f9;">
+                            <span class="news-date" style="margin:0;">{{ \Carbon\Carbon::parse($article->published_at)->translatedFormat('j \d\e F, Y') }}</span>
+                            <span class="news-read-more" style="font-family:'Montserrat',sans-serif; font-size:0.68rem; font-weight:700; color:var(--blue); display:inline-flex; align-items:center; gap:4px; text-transform:uppercase; letter-spacing:0.06em;">{{ __('Leer más →') }}</span>
+                        </div>
                     </div>
-                </a>
+                </article>
             @empty
                 <p style="grid-column: 1 / -1; text-align: center; color: var(--muted); padding: 40px 0;">
                     {{ __('No hay perspectivas publicadas actualmente.') }}
@@ -455,6 +550,17 @@
         </div>
     </div>
 </section>
+
+<!-- ── MODAL ARTÍCULO EN HOME ────────────────────────────────── -->
+<div class="article-modal-overlay" id="homeArticleModal" onclick="if(event.target === this) closeHomeModal()" role="dialog" aria-modal="true">
+    <div class="article-modal">
+        <button class="modal-close" onclick="closeHomeModal()" aria-label="Cerrar">✕</button>
+        <div class="modal-cat" id="homeModalCat"></div>
+        <div class="modal-title" id="homeModalTitle"></div>
+        <div class="modal-date" id="homeModalDate"></div>
+        <div class="modal-body" id="homeModalBody"></div>
+    </div>
+</div>
 
 <!-- Wave: section-white -> section-navy -->
 <div class="wave-wrap" style="background: #ffffff;">
@@ -481,5 +587,41 @@
         </div>
     </div>
 </section>
+
+@push('scripts')
+<script>
+    const homeArticlesList = @json($homeArticlesData);
+
+    function openHomeArticle(idOrSlug) {
+        if (!idOrSlug) return;
+        const a = homeArticlesList.find(item => Number(item.id) === Number(idOrSlug) || String(item.slug) === String(idOrSlug));
+        if (!a) return;
+
+        const cat = document.getElementById('homeModalCat');
+        const title = document.getElementById('homeModalTitle');
+        const date = document.getElementById('homeModalDate');
+        const body = document.getElementById('homeModalBody');
+        const overlay = document.getElementById('homeArticleModal');
+
+        if (cat) cat.textContent = a.category;
+        if (title) title.textContent = a.title;
+        if (date) date.textContent = a.date;
+        if (body) body.innerHTML = a.body;
+
+        if (overlay) overlay.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeHomeModal() {
+        const overlay = document.getElementById('homeArticleModal');
+        if (overlay) overlay.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeHomeModal();
+    });
+</script>
+@endpush
 
 @endsection

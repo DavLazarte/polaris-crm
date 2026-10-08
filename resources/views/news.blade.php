@@ -229,14 +229,18 @@
         background: rgba(0,4,18,0.78);
         backdrop-filter: blur(7px);
         -webkit-backdrop-filter: blur(7px);
-        z-index: 2000;
+        z-index: 10000;
         display: flex; align-items: center; justify-content: center;
         padding: 24px;
-        opacity: 0; pointer-events: none;
-        transition: opacity 0.3s ease;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
     }
     .article-modal-overlay.open {
-        opacity: 1; pointer-events: all;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: all;
     }
     .article-modal {
         background: white;
@@ -322,6 +326,19 @@
 </div>
 
 <!-- ── SECCIÓN BLANCA: ARTÍCULO DESTACADO + LISTA ────────────── -->
+@php
+$allArticles = collect([$featured])->filter()->concat($articles)->map(function($a) {
+    return [
+        'id' => $a->id,
+        'slug' => $a->slug,
+        'cat' => (string) $a->category,
+        'title' => (string) $a->title,
+        'date' => \Carbon\Carbon::parse($a->published_at)->translatedFormat("j F Y"),
+        'excerpt' => (string) $a->excerpt,
+        'body' => (string) $a->body,
+    ];
+})->values();
+@endphp
 <section class="section-white">
     <div class="inner">
         <div class="sec-label fade-up">{{ __('Destacado') }}</div>
@@ -330,7 +347,7 @@
             @php
                 $featuredFilter = in_array($featured->category, ['Comercio Exterior', 'Casos de Éxito']) ? 'comercio' : 'geopolitica';
             @endphp
-            <div class="article-featured fade-up" data-article="{{ $featured->slug }}" data-category="{{ $featuredFilter }}" style="cursor: pointer;">
+            <div class="article-featured fade-up" onclick="openArticleModal('{{ $featured->slug }}')" data-article="{{ $featured->slug }}" data-category="{{ $featuredFilter }}" style="cursor: pointer;">
                 <div class="article-featured-img">
                     @if($featured->img)
                         <img src="{{ Storage::url($featured->img) }}" alt="{{ $featured->title }}" style="width: 100%; height: 100%; object-fit: cover;">
@@ -366,7 +383,7 @@
                 @php
                     $filterCat = in_array($article->category, ['Comercio Exterior', 'Casos de Éxito']) ? 'comercio' : 'geopolitica';
                 @endphp
-                <div class="article-row fade-up" data-article="{{ $article->slug }}" data-category="{{ $filterCat }}" style="cursor: pointer;">
+                <div class="article-row fade-up" onclick="openArticleModal('{{ $article->slug }}')" data-article="{{ $article->slug }}" data-category="{{ $filterCat }}" style="cursor: pointer;">
                     <div class="article-row-thumb">
                         @if($article->img)
                             <img src="{{ Storage::url($article->img) }}" alt="{{ $article->title }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
@@ -414,115 +431,84 @@
 </section>
 
 <!-- ── MODAL ARTÍCULO COMPLETO ──────────────────────────────── -->
-<div class="article-modal-overlay" id="articleModal" role="dialog" aria-modal="true">
+<div class="article-modal-overlay" id="articleModal" onclick="if(event.target === this) closeArticleModal()" role="dialog" aria-modal="true">
     <div class="article-modal">
-        <button class="modal-close" id="modalClose" aria-label="Cerrar">✕</button>
+        <button class="modal-close" onclick="closeArticleModal()" aria-label="Cerrar">✕</button>
         <div class="modal-cat" id="modalCat"></div>
         <div class="modal-title" id="modalTitle"></div>
         <div class="modal-date" id="modalDate"></div>
         <div class="modal-body" id="modalBody"></div>
-        <div class="modal-cta" id="modalCta"></div>
+        <div class="modal-cta" id="modalCta" style="display: none;"></div>
     </div>
 </div>
 
 <script>
-// ── CONTENIDO COMPLETO DE ARTÍCULOS DESDE BD ──────────────────
-const articles = {
-    @if($featured)
-    '{{ $featured->slug }}': {
-        cat: '{{ $featured->category }}',
-        title: '{{ $featured->title }}',
-        date: '{{ \Carbon\Carbon::parse($featured->published_at)->translatedFormat("j \d\e F Y") }}',
-        body: `{!! addslashes($featured->body) !!}`,
-        cta: ''
-    },
-    @endif
-    @foreach($articles as $article)
-    '{{ $article->slug }}': {
-        cat: '{{ $article->category }}',
-        title: '{{ $article->title }}',
-        date: '{{ \Carbon\Carbon::parse($article->published_at)->translatedFormat("j \d\e F Y") }}',
-        body: `{!! addslashes($article->body) !!}`,
-        cta: ''
-    },
-    @endforeach
-};
+    const newsArticlesList = @json($allArticles);
 
-// ── MODAL INTERACTION ─────────────────────────────────────────
-const overlay   = document.getElementById('articleModal');
-const closeBtn  = document.getElementById('modalClose');
-const modalCat  = document.getElementById('modalCat');
-const modalTitle= document.getElementById('modalTitle');
-const modalDate = document.getElementById('modalDate');
-const modalBody = document.getElementById('modalBody');
-const modalCta  = document.getElementById('modalCta');
+    function openArticleModal(idOrSlug) {
+        if (!idOrSlug) return;
+        const a = newsArticlesList.find(item => String(item.slug) === String(idOrSlug) || Number(item.id) === Number(idOrSlug));
+        if (!a) return;
 
-function openModal(slug) {
-    const a = articles[slug];
-    if (!a) return;
-    modalCat.textContent   = a.cat;
-    modalTitle.textContent = a.title;
-    modalDate.textContent  = a.date;
-    modalBody.innerHTML    = a.body;
-    if (a.cta) {
-        modalCta.innerHTML     = a.cta;
-        modalCta.style.display = 'block';
-    } else {
-        modalCta.style.display = 'none';
+        const modalCat   = document.getElementById('modalCat');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalDate  = document.getElementById('modalDate');
+        const modalBody  = document.getElementById('modalBody');
+        const overlay    = document.getElementById('articleModal');
+
+        if (modalCat)   modalCat.textContent = a.cat;
+        if (modalTitle) modalTitle.textContent = a.title;
+        if (modalDate)  modalDate.textContent = a.date;
+        if (modalBody)  modalBody.innerHTML = a.body;
+
+        if (overlay) overlay.classList.add('open');
+        document.body.style.overflow = 'hidden';
     }
-    overlay.classList.add('open');
-    document.body.style.overflow = 'hidden';
-}
 
-function closeModal() {
-    overlay.classList.remove('open');
-    document.body.style.overflow = '';
-}
+    function closeArticleModal() {
+        const overlay = document.getElementById('articleModal');
+        if (overlay) overlay.classList.remove('open');
+        document.body.style.overflow = '';
+    }
 
-closeBtn.addEventListener('click', closeModal);
-overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) closeModal();
-});
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
-});
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeArticleModal();
+    });
 
-const featEl = document.querySelector('.article-featured');
-if (featEl) {
-    featEl.addEventListener('click', () => openModal(featEl.dataset.article));
-}
+    // Filtros de categoría
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            const filter = this.getAttribute('data-filter');
 
-document.querySelectorAll('.article-row').forEach(row => {
-    row.addEventListener('click', () => openModal(row.dataset.article));
-});
+            document.querySelectorAll('.article-row').forEach(row => {
+                const cat = row.getAttribute('data-category');
+                if (filter === 'all' || cat === filter) {
+                    row.style.display = 'grid';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
 
-document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        const filter = this.dataset.filter;
-
-        document.querySelectorAll('.article-row').forEach(row => {
-            if (filter === 'all' || row.dataset.category === filter) {
-                row.style.display = 'grid';
-            } else {
-                row.style.display = 'none';
+            const featEl = document.querySelector('.article-featured');
+            if (featEl) {
+                const featCat = featEl.getAttribute('data-category');
+                if (filter === 'all' || featCat === filter) {
+                    featEl.style.display = 'grid';
+                } else {
+                    featEl.style.display = 'none';
+                }
             }
         });
+    });
 
-        if (featEl) {
-            if (filter === 'all' || featEl.dataset.category === filter) {
-                featEl.style.display = 'grid';
-            } else {
-                featEl.style.display = 'none';
-            }
-        }
-// Auto-abrir modal si viene por parámetro o hash (?article=slug o #slug)
-const urlParams = new URLSearchParams(window.location.search);
-const targetSlug = urlParams.get('article') || window.location.hash.replace('#', '');
-if (targetSlug && articles[targetSlug]) {
-    openModal(targetSlug);
-}
+    // Auto-abrir si viene por parámetro o hash (?article=slug o #slug o ?id=1)
+    const urlParams = new URLSearchParams(window.location.search);
+    const targetParam = urlParams.get('article') || urlParams.get('id') || window.location.hash.replace('#', '');
+    if (targetParam) {
+        openArticleModal(targetParam);
+    }
 </script>
 
 @endsection
