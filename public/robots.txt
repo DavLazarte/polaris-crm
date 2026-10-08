@@ -1,0 +1,15 @@
+# Robots.txt para Polaris Cooperation Group
+# Control de rastreo para buscadores (Google y Baidu)
+
+User-agent: *
+Allow: /
+
+# Rastreadores específicos
+User-agent: Googlebot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+# Enlace al Sitemap
+Sitemap: https://polariscg.com.ar/sitemap.xml

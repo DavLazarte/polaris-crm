@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Marca — Polaris Cooperation Group</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Lato:ital,wght@0,300;0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        polar: '#0A1D3D',
+                        deep: '#13315C',
+                        corp: '#3158BF',
+                        light: '#A9C3E6',
+                        accent: '#3158BF',
+                        grayLight: '#E6E9EE',
+                    },
+                    fontFamily: {
+                        sans: ['Lato', 'sans-serif'],
+                        montserrat: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --polar: #0A1D3D;
+            --deep: #13315C;
+            --corp: #3158BF;
+            --light: #A9C3E6;
+            --gray: #E6E9EE;
+            --white: #FFFFFF;
+            --text: #1a1a2e;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background: #f8fafc;
+            color: var(--text);
+        }
+
+        /* MAP GRID BACKGROUND PATTERN */
+        .bg-map-pattern {
+            position: relative;
+            background-color: #f8fafc;
+            background-image: 
+                radial-gradient(rgba(49, 88, 191, 0.12) 1px, transparent 1px), 
+                linear-gradient(to right, rgba(49, 88, 191, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(49, 88, 191, 0.03) 1px, transparent 1px);
+            background-size: 32px 32px, 160px 160px, 160px 160px;
+            background-position: center;
+        }
+
+        .bg-map-dark {
+            position: relative;
+            background-color: var(--polar);
+            background-image: 
+                radial-gradient(rgba(169, 195, 230, 0.12) 1px, transparent 1px), 
+                linear-gradient(to right, rgba(169, 195, 230, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(169, 195, 230, 0.03) 1px, transparent 1px);
+            background-size: 32px 32px, 160px 160px, 160px 160px;
+            background-position: center;
+        }
+
+        /* SIDEBAR (Glassmorphic) */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 240px;
+            background: rgba(10, 29, 61, 0.96);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            padding: 32px 0;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 24px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.65);
+            text-decoration: none;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+            transition: all 0.25s ease;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            color: #fff;
+            border-left-color: var(--corp);
+            background: rgba(255, 255, 255, 0.06);
+            padding-left: 28px;
+        }
+
+        .nav-num {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 400;
+            min-width: 18px;
+        }
+
+        /* MAIN CONTENT AREA */
+        .main {
+            margin-left: 240px;
+        }
+
+        /* SECTIONS */
+        .section {
+            padding: 96px 80px;
+            border-bottom: 1px solid var(--border);
+            background: #fff;
+            position: relative;
+        }
+
+        /* PRINT STYLE RULES FOR LANDSCAPE PDF EXPORT */
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 10mm;
+            }
+
+            body {
+                background: #fff;
+                color: #000;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .sidebar, .print-btn {
+                display: none !important;
+            }
+
+            .main {
+                margin-left: 0 !important;
+            }
+
+            .section {
+                padding: 10mm 5mm !important;
+                border-bottom: none !important;
+                page-break-before: always !important;
+                break-before: page !important;
+                background: #fff !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+
+            .cover {
+                page-break-before: avoid !important;
+                break-before: avoid !important;
+                height: 100vh !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                background: var(--polar) !important;
+                box-sizing: border-box !important;
+                padding: 20mm 15mm !important;
+            }
+
+            /* Prevent grid split of the logo grid and cards */
+            .logo-grid {
+                display: grid !important;
+                grid-template-columns: repeat(4, 1fr) !important;
+                gap: 12px !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+
+            .logo-card {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+
+            /* Adjust visual container heights so they fit completely in one row on landscape page */
+            .logo-display-box {
+                height: 140px !important;
+            }
+
+            .logo-display-box img {
+                max-height: 90px !important;
+            }
+
+            .type-card, .usage-card {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+
+            /* Arrange applications in a clean 4-column row for landscape A4 printing */
+            .app-grid {
+                display: grid !important;
+                grid-template-columns: repeat(4, 1fr) !important;
+                gap: 12px !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+
+            .app-card {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+
+            /* Allow footer to render naturally without inserting a blank page */
+            footer {
+                page-break-before: auto !important;
+                break-before: auto !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                background: var(--polar) !important;
+                padding: 12mm 10mm !important;
+                margin-top: 15px !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-map-pattern">
+
+    <!-- SIDEBAR NAV -->
+    <nav class="sidebar">
+        <div class="sidebar-logo px-6 pb-6 mb-4 border-b border-white/10">
+            <img id="nav-logo" src="vectorpolaris-blanco.png" alt="Polaris Cooperation Group" class="h-12 w-auto object-contain">
+        </div>
+        <div class="sidebar-title font-montserrat text-[10px] tracking-[0.2em] uppercase text-white/40 px-6 mb-3 font-semibold">Manual de Marca</div>
+        <a href="#cover" class="nav-item active"><span class="nav-num">00</span>Portada</a>
+        <a href="#about" class="nav-item"><span class="nav-num">01</span>Sobre la marca</a>
+        <a href="#logotipo" class="nav-item"><span class="nav-num">02</span>Logotipo</a>
+        <a href="#colores" class="nav-item"><span class="nav-num">03</span>Paleta de colores</a>
+        <a href="#tipografia" class="nav-item"><span class="nav-num">04</span>Tipografías</a>
+        <a href="#respeto" class="nav-item"><span class="nav-num">05</span>Área de respeto</a>
+        <a href="#tamaños" class="nav-item"><span class="nav-num">06</span>Tamaños mínimos</a>
+        <a href="#usos" class="nav-item"><span class="nav-num">07</span>Usos correctos</a>
+        <a href="#aplicaciones" class="nav-item"><span class="nav-num">08</span>Aplicaciones</a>
+        
+        <div class="sidebar-version px-6 pt-4 border-t border-white/10 mt-auto text-[10px] text-white/35 font-montserrat">
+            Versión 1.1 · 2026<br>Polaris Cooperation Group
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+        <!-- 00 COVER -->
+        <section class="cover min-height-screen bg-map-dark flex flex-col justify-center px-16 py-24 relative overflow-hidden" id="cover" style="min-height: 100vh;">
+            <!-- SVG Map Line Overlay -->
+            <div class="absolute inset-0 opacity-15 pointer-events-none">
+                <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+                    <circle cx="500" cy="500" r="400" fill="none" stroke="#A9C3E6" stroke-width="1" stroke-dasharray="8,8" />
+                    <circle cx="500" cy="500" r="250" fill="none" stroke="#A9C3E6" stroke-width="1.5" />
+                    <path d="M 100 500 L 900 500 M 500 100 L 500 900" stroke="#A9C3E6" stroke-width="0.5" stroke-dasharray="4,4" />
+                    <!-- Mock Constellation points for Argentina Map shape hint -->
+                    <circle cx="450" cy="650" r="5" fill="#3158BF" class="animate-pulse" />
+                    <circle cx="480" cy="720" r="4" fill="#3158BF" />
+                    <circle cx="520" cy="790" r="6" fill="#3158BF" class="animate-pulse" />
+                    <circle cx="560" cy="850" r="3" fill="#3158BF" />
+                    <polyline points="450,650 480,720 520,790 560,850" fill="none" stroke="#A9C3E6" stroke-width="1.5" />
+                </svg>
+            </div>
+
+            <div class="relative z-10 max-w-4xl">
+                <div class="font-montserrat text-xs tracking-[0.3em] uppercase text-light font-bold mb-6">Identidad Visual · Manual de Marca</div>
+                <div class="mb-12">
+                    <img id="cover-logo" src="vectorpolaris-blanco.png" alt="Polaris Cooperation Group" class="h-48 md:h-72 w-auto object-contain hover:scale-105 transition-all duration-300">
+                </div>
+                <h1 class="font-montserrat text-5xl md:text-6xl font-extrabold text-white leading-tight mb-2 tracking-tight">Polaris Cooperation Group</h1>
+                <div class="font-montserrat text-sm font-light text-white/50 tracking-[0.15em] uppercase mb-16">Manual de Identidad Corporativa</div>
+                
+                <div class="grid grid-cols-3 gap-10 max-w-xl">
+                    <div>
+                        <div class="text-[10px] tracking-[0.15em] uppercase text-white/30 font-montserrat mb-1">Versión</div>
+                        <div class="text-sm text-white/80 font-medium font-montserrat">1.1 (Rediseño)</div>
+                    </div>
+                    <div>
+                        <div class="text-[10px] tracking-[0.15em] uppercase text-white/30 font-montserrat mb-1">Año</div>
+                        <div class="text-sm text-white/80 font-medium font-montserrat">2026</div>
+                    </div>
+                    <div>
+                        <div class="text-[10px] tracking-[0.15em] uppercase text-white/30 font-montserrat mb-1">Documento</div>
+                        <div class="text-sm text-white/80 font-medium font-montserrat">Confidencial</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 01 SOBRE LA MARCA -->
+        <section class="section" id="about">
+            <div class="section-label font-montserrat text-[10px] tracking-[0.2em] uppercase text-corp font-bold mb-3 flex items-center gap-2">
+                <span class="w-6 h-[1.5px] bg-corp"></span>01
+            </div>
+            <h2 class="font-montserrat text-3xl font-bold text-polar mb-4">Sobre la Marca</h2>
+            <p class="text-base text-muted max-w-3xl leading-relaxed mb-10">
+                Polaris Cooperation Group es una consultora argentina especializada en cooperación internacional y comercio exterior. Su nombre remite a la Estrella Polar —símbolo de guía, orientación y dirección— reflejando su rol como brújula estratégica para gobiernos, empresas y organizaciones en su inserción global.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10 mb-8">
+                <div class="bg-slate-50 border border-slate-100 rounded-xl p-6 hover:shadow-md transition-shadow">
+                    <div class="font-montserrat text-xs tracking-wider uppercase text-corp font-bold mb-2">Misión</div>
+                    <div class="text-xs text-slate-700 leading-relaxed">Transformar la complejidad del escenario global en decisiones claras, oportunidades concretas y resultados medibles.</div>
+                </div>
+                <div class="bg-slate-50 border border-slate-100 rounded-xl p-6 hover:shadow-md transition-shadow">
+                    <div class="font-montserrat text-xs tracking-wider uppercase text-corp font-bold mb-2">Pilares</div>
+                    <div class="text-xs text-slate-700 leading-relaxed">Cooperación internacional y Comercio exterior — los dos ejes que definen su propuesta de valor.</div>
+                </div>
+                <div class="bg-slate-50 border border-slate-100 rounded-xl p-6 hover:shadow-md transition-shadow">
+                    <div class="font-montserrat text-xs tracking-wider uppercase text-corp font-bold mb-2">Diferencial</div>
+                    <div class="text-xs text-slate-700 leading-relaxed"><strong>Soft Landing</strong>: acompañamiento integral en la expansión internacional, con ejecución real en territorio.</div>
+                </div>
+            </div>
+
+            <div class="p-6 border-l-4 border-corp bg-blue-50/50 rounded-r-xl max-w-3xl">
+                <div class="font-montserrat text-xs tracking-wider uppercase text-corp font-bold mb-1">Concepto de marca</div>
+                <div class="text-xs text-slate-700 leading-relaxed">La Estrella Polar como metáfora visual: los puntos de la constelación forman la silueta de Argentina, mientras líneas de conexión representan el alcance global de la consultora. La marca combina identidad de origen con vocación internacional.</div>
+            </div>
+        </section>
+
+        <!-- 02 LOGOTIPO -->
+        <section class="section" id="logotipo">
+            <div class="section-label font-montserrat text-[10px] tracking-[0.2em] uppercase text-corp font-bold mb-3 flex items-center gap-2">
+                <span class="w-6 h-[1.5px] bg-corp"></span>02
+            </div>
+            <h2 class="font-montserrat text-3xl font-bold text-polar mb-4">Logotipo Oficial</h2>
+            <p class="text-base text-muted max-w-3xl leading-relaxed mb-10">
+                El logotipo de Polaris Cooperation Group se compone de un símbolo (constelación / isotipo) y un wordmark. A continuación se presentan las versiones oficiales en color e inversas en formato **destacado y muy grande** para protagonizar la identidad visual.
+            </p>
+
+            <div class="logo-grid grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+                <!-- Logo Principal Color -->
+                <div class="logo-card border border-slate-100 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow bg-white">
+                    <div class="logo-display-box h-72 flex items-center justify-center p-6 bg-slate-50">
+                        <img src="vectorpolarislogo.png" alt="Logo Principal - Fondo Claro" class="max-h-48 w-auto object-contain hover:scale-105 transition-all duration-300">
+                    </div>
+                    <div class="p-4 border-t border-slate-100 bg-white flex justify-between items-center">
+                        <span class="text-xs font-semibold text-polar font-montserrat">Logo Principal (Fondo Claro)</span>
+                        <span class="text-[9px] bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-semibold uppercase">Principal</span>
+                    </div>
+                </div>
+
+                <!-- Logo Principal Invertido Blanco -->
+                <div class="logo-card border border-slate-800/20 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow bg-polar">
+                    <div class="logo-display-box h-72 flex items-center justify-center p-6 bg-map-dark">
+                        <img src="vectorpolaris-blanco.png" alt="Logo Inversión - Fondo Oscuro" class="max-h-48 w-auto object-contain hover:scale-105 transition-all duration-300">
+                    </div>
+                    <div class="p-4 border-t border-white/10 bg-slate-900 flex justify-between items-center">
+                        <span class="text-xs font-semibold text-white/90 font-montserrat">Logo Inversión (Fondo Oscuro)</span>
+                        <span class="text-[9px] bg-white/20 text-white px-2 py-0.5 rounded-full font-semibold uppercase">Inversión</span>
+                    </div>
+                </div>
+
+                <!-- Logo Monocromático Negro -->
+                <div class="logo-card border border-slate-100 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow bg-white">
+                    <div class="logo-display-box h-72 flex items-center justify-center p-6 bg-slate-50">
+                        <img src="vectorpolaris-negro.png" alt="Logo Monocromático Negro" class="max-h-48 w-auto object-contain hover:scale-105 transition-all duration-300">
+                    </div>
+                    <div class="p-4 border-t border-slate-100 bg-white flex justify-between items-center">
+                        <span class="text-xs font-semibold text-polar font-montserrat">Monocromático Negro</span>
+                        <span class="text-[9px] bg-slate-200 text-slate-800 px-2 py-0.5 rounded-full font-semibold uppercase">Monocromo Positivo</span>
+                    </div>
+                </div>
+
+                <!-- Logo Monocromático Blanco -->
+                <div class="logo-card border border-slate-200/xl rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow bg-slate-700">
+                    <div class="logo-display-box h-72 flex items-center justify-center p-6 bg-slate-800">
+                        <img src="vectorpolaris-blanco.png" alt="Logo Monocromático Blanco" class="max-h-48 w-auto object-contain hover:scale-105 transition-all duration-300">
+                    </div>
+                    <div class="p-4 border-t border-white/10 bg-slate-900 flex justify-between items-center">
+                        <span class="text-xs font-semibold text-white/90 font-montserrat">Monocromático Blanco</span>
+                        <span class="text-[9px] bg-white/10 text-white/80 px-2 py-0.5 rounded-full font-semibold uppercase">Monocromo Negativo</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 03 COLORES -->
+        <section class="section" id="colores">
+            <div class="section-label font-montserrat text-[10px] tracking-[0.2em] uppercase text-corp font-bold mb-3 flex items-center gap-2">
+                <span class="w-6 h-[1.5px] bg-corp"></span>03
+            </div>
+            <h2 class="font-montserrat text-3xl font-bold text-polar mb-4">Paleta de Colores</h2>
+            <p class="text-base text-muted max-w-3xl leading-relaxed mb-10">
+                Los azules corporativos transmiten seriedad, confianza y solidez en el ámbito de la consultoría exterior e internacional. El Azul Polar y Profundo dominan la identidad visual.
+            </p>
+
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 relative z-10">
+                <!-- Azul Polar -->
+                <div class="border border-slate-100 rounded-xl overflow-hidden bg-white shadow-sm hover:-translate-y-1 transition-all duration-200">
+                    <div class="h-24 bg-polar"></div>
+                    <div class="p-4 text-xs">
+                        <div class="font-bold text-polar uppercase font-montserrat mb-2 text-[11px]">Azul Polar</div>
+                        <div class="text-slate-500 font-mono space-y-1 text-[10px]">
+                            <div>HEX: #0A1D3D</div>
+                            <div>RGB: 10, 29, 61</div>
+                            <div>CMYK: 100·85·40·55</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Azul Profundo -->
+                <div class="border border-slate-100 rounded-xl overflow-hidden bg-white shadow-sm hover:-translate-y-1 transition-all duration-200">
+                    <div class="h-24 bg-deep"></div>
+                    <div class="p-4 text-xs">
+                        <div class="font-bold text-polar uppercase font-montserrat mb-2 text-[11px]">Azul Profundo</div>
+                        <div class="text-slate-500 font-mono space-y-1 text-[10px]">
+                            <div>HEX: #13315C</div>
+                            <div>RGB: 19, 49, 92</div>
+                            <div>CMYK: 100·80·20·40</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Azul Corporativo -->
+                <div class="border border-slate-100 rounded-xl overflow-hidden bg-white shadow-sm hover:-translate-y-1 transition-all duration-200">
+                    <div class="h-24 bg-corp"></div>
+                    <div class="p-4 text-xs">
+                        <div class="font-bold text-polar uppercase font-montserrat mb-2 text-[11px]">Azul Corp</div>
+                        <div class="text-slate-500 font-mono space-y-1 text-[10px]">
+                            <div>HEX: #3158BF</div>
+                            <div>RGB: 49, 88, 191</div>
+                            <div>CMYK: 85·60·0·0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Azul Claro -->
+                <div class="border border-slate-100 rounded-xl overflow-hidden bg-white shadow-sm hover:-translate-y-1 transition-all duration-200">
+                    <div class="h-24 bg-light"></div>
+                    <div class="p-4 text-xs">
+                        <div class="font-bold text-polar uppercase font-montserrat mb-2 text-[11px]">Azul Claro</div>
+                        <div class="text-slate-500 font-mono space-y-1 text-[10px]">
+                            <div>HEX: #A9C3E6</div>
+                            <div>RGB: 169, 195, 230</div>
+                            <div>CMYK: 35·15·0·0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gris Claro -->
+                <div class="border border-slate-100 rounded-xl overflow-hidden bg-white shadow-sm hover:-translate-y-1 transition-all duration-200">
+                    <div class="h-24 bg-grayLight border-b border-slate-100"></div>
+                    <div class="p-4 text-xs">
+                        <div class="font-bold text-polar uppercase font-montserrat mb-2 text-[11px]">Gris Claro</div>
+                        <div class="text-slate-500 font-mono space-y-1 text-[10px]">
+                            <div>HEX: #E6E9EE</div>
+                            <div>RGB: 230, 233, 238</div>
+                            <div>CMYK: 8·6·4·0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 04 TIPOGRAFÍAS -->
+        <section class="section" id="tipografia">
+            <div class="section-label font-montserrat text-[10px] tracking-[0.2em] uppercase text-corp font-bold mb-3 flex items-center gap-2">
+                <span class="w-6 h-[1.5px] bg-corp"></span>04
+            </div>
+            <h2 class="font-montserrat text-3xl font-bold text-polar mb-4">Tipografías</h2>
+            <p class="text-base text-muted max-w-3xl leading-relaxed mb-10">
+                La marca utiliza Montserrat para encabezados y Lato para lectura de textos. Ambas tipografías son sans-serif y ofrecen un equilibrio óptimo entre modernidad y formalidad.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+                <!-- Montserrat -->
+                <div class="border border-slate-100 rounded-xl overflow-hidden bg-white shadow-sm">
+                    <div class="bg-polar p-6">
+                        <div class="text-[10px] tracking-wider uppercase text-white/40 font-montserrat mb-1">Tipografía Primaria</div>
+                        <div class="text-2xl font-bold text-white font-montserrat">Montserrat</div>
+                    </div>
+                    <div class="p-6">
+                        <div class="text-sm font-semibold font-montserrat text-polar tracking-wide mb-4">
+                            ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>
+                            abcdefghijklmnopqrstuvwxyz<br>
+                            0123456789 !@#$%&amp;*()
+                        </div>
+                        <div class="flex gap-4 border-t border-slate-100 pt-4 text-xs font-montserrat text-slate-500">
+                            <span class="font-light">Light</span>
+                            <span class="font-normal">Regular</span>
+                            <span class="font-semibold">SemiBold</span>
+                            <span class="font-bold">Bold</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lato -->
+                <div class="border border-slate-100 rounded-xl overflow-hidden bg-white shadow-sm">
+                    <div class="bg-deep p-6">
+                        <div class="text-[10px] tracking-wider uppercase text-white/40 font-montserrat mb-1">Tipografía Secundaria</div>
+                        <div class="text-2xl font-bold text-white font-sans">Lato</div>
+                    </div>
+                    <div class="p-6">
+                        <div class="text-sm font-sans text-polar tracking-wide mb-4">
+                            ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>
+                            abcdefghijklmnopqrstuvwxyz<br>
+                            0123456789 !@#$%&amp;*()
+                        </div>
+                        <div class="flex gap-4 border-t border-slate-100 pt-4 text-xs font-sans text-slate-500">
+                            <span class="font-light">Light</span>
+                            <span class="font-normal">Regular</span>
+                            <span class="font-bold">Bold</span>
+                            <span class="italic">Italic</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 05 ÁREA DE RESPETO -->
+        <section class="section" id="respeto">
+            <div class="section-label font-montserrat text-[10px] tracking-[0.2em] uppercase text-corp font-bold mb-3 flex items-center gap-2">
+                <span class="w-6 h-[1.5px] bg-corp"></span>05
+            </div>
+            <h2 class="font-montserrat text-3xl font-bold text-polar mb-4">Área de Respeto</h2>
+            <p class="text-base text-muted max-w-3xl leading-relaxed mb-10">
+                Para garantizar la óptima legibilidad del logotipo en cualquier soporte, este debe estar siempre rodeado por un espacio de protección libre de otros elementos gráficos o texto. El espacio de protección mínimo equivale a la altura de la letra "O" del logotipo de Polaris.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center relative z-10">
+                <!-- Seccion de logo mas grande en la maqueta para mejor detalle visual -->
+                <div class="border border-slate-200/60 rounded-xl bg-white p-14 flex items-center justify-center relative overflow-hidden">
+                    <!-- Dotted bounds representing safe area -->
+                    <div class="border-2 border-dashed border-corp/30 p-12 rounded-lg flex items-center justify-center relative">
+                        <img src="vectorpolarislogo.png" alt="Área de Respeto" class="h-24 w-auto object-contain">
+                        <!-- Markers -->
+                        <span class="absolute -top-7 left-1/2 -translate-x-1/2 text-xs font-bold text-corp font-montserrat">X</span>
+                        <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs font-bold text-corp font-montserrat">X</span>
+                        <span class="absolute -left-7 top-1/2 -translate-y-1/2 text-xs font-bold text-corp font-montserrat">X</span>
+                        <span class="absolute -right-7 top-1/2 -translate-y-1/2 text-xs font-bold text-corp font-montserrat">X</span>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div class="bg-white border border-slate-100 p-5 rounded-xl shadow-sm">
+                        <h4 class="font-montserrat text-xs font-bold uppercase text-polar mb-2">Regla de Proporción</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">El margen de resguardo es dinámico y proporcional al tamaño en que se aplique la marca. Se define utilizando la altura de la letra "O" del texto marcario principal.</p>
+                    </div>
+                    <div class="bg-white border border-slate-100 p-5 rounded-xl shadow-sm">
+                        <h4 class="font-montserrat text-xs font-bold uppercase text-polar mb-2">Aplicación General</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">Ningún texto, borde, imagen o elemento gráfico decorativo debe cruzar la línea de resguardo punteada mostrada en la ilustración de la izquierda.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 06 TAMAÑOS MÍNIMOS -->
+        <section class="section" id="tamaños">
+            <div class="section-label font-montserrat text-[10px] tracking-[0.2em] uppercase text-corp font-bold mb-3 flex items-center gap-2">
+                <span class="w-6 h-[1.5px] bg-corp"></span>06
+            </div>
+            <h2 class="font-montserrat text-3xl font-bold text-polar mb-4">Tamaños Mínimos</h2>
+            <p class="text-base text-muted max-w-3xl leading-relaxed mb-10">
+                Se establecen restricciones de tamaño mínimo de uso en medios impresos y digitales para evitar la pérdida de legibilidad de las partes más delgadas de la constelación.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+                <!-- Impresión -->
+                <div class="border border-slate-100 rounded-xl bg-white p-8 text-center shadow-sm">
+                    <div class="font-montserrat text-[10px] tracking-wider uppercase text-slate-400 font-bold mb-6">Medios Impresos</div>
+                    <div class="h-24 flex items-center justify-center mb-6">
+                        <!-- Logos mediano/grande -->
+                        <img src="vectorpolarislogo.png" alt="Tamaño mínimo impreso" class="h-12 w-auto object-contain">
+                    </div>
+                    <div class="flex items-center justify-center gap-2 mb-4">
+                        <div class="h-[1px] bg-slate-300 w-12"></div>
+                        <span class="text-xs font-mono font-bold text-polar">20 mm</span>
+                        <div class="h-[1px] bg-slate-300 w-12"></div>
+                    </div>
+                    <p class="text-[11px] text-amber-600 bg-amber-50 rounded-lg py-2 px-4 inline-block font-medium">⚠️ No reproducir en anchos menores a 20 mm.</p>
+                </div>
+
+                <!-- Digital -->
+                <div class="border border-slate-100 rounded-xl bg-white p-8 text-center shadow-sm">
+                    <div class="font-montserrat text-[10px] tracking-wider uppercase text-slate-400 font-bold mb-6">Medios Digitales</div>
+                    <div class="h-24 flex items-center justify-center mb-6">
+                        <!-- Logos mediano/grande -->
+                        <img src="vectorpolarislogo.png" alt="Tamaño mínimo digital" class="h-10 w-auto object-contain">
+                    </div>
+                    <div class="flex items-center justify-center gap-2 mb-4">
+                        <div class="h-[1px] bg-slate-300 w-12"></div>
+                        <span class="text-xs font-mono font-bold text-polar">120 px</span>
+                        <div class="h-[1px] bg-slate-300 w-12"></div>
+                    </div>
+                    <p class="text-[11px] text-amber-600 bg-amber-50 rounded-lg py-2 px-4 inline-block font-medium">⚠️ No usar en anchos menores a 120 píxeles.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 07 USOS CORRECTOS E INCORRECTOS -->
+        <section class="section" id="usos">
+            <div class="section-label font-montserrat text-[10px] tracking-[0.2em] uppercase text-corp font-bold mb-3 flex items-center gap-2">
+                <span class="w-6 h-[1.5px] bg-corp"></span>07
+            </div>
+            <h2 class="font-montserrat text-3xl font-bold text-polar mb-4">Usos Correctos e Incorrectos</h2>
+            <p class="text-base text-muted max-w-3xl leading-relaxed mb-10">
+                La coherencia y consistencia en el uso de la marca es crucial. A continuación se detallan los fondos aprobados y algunas prácticas que deben evitarse bajo cualquier circunstancia.
+            </p>
+
+            <h4 class="font-montserrat text-xs font-bold uppercase text-emerald-600 mb-4 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-600"></span>✓ Usos correctos
+            </h4>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 relative z-10">
+                <div class="border border-slate-100 rounded-xl overflow-hidden bg-white shadow-sm">
+                    <div class="h-32 bg-white flex items-center justify-center p-4">
+                        <img src="vectorpolarislogo.png" alt="Fondo blanco" class="max-h-16 w-auto object-contain">
+                    </div>
+                    <div class="p-3 text-center text-[10px] text-slate-500 font-medium bg-slate-50 border-t border-slate-100">Fondo Blanco</div>
+                </div>
+
+                <div class="border border-slate-100 rounded-xl overflow-hidden bg-white shadow-sm">
+                    <div class="h-32 bg-slate-100 flex items-center justify-center p-4">
+                        <img src="vectorpolaris-negro.png" alt="Fondo Gris Claro" class="max-h-16 w-auto object-contain">
+                    </div>
+                    <div class="p-3 text-center text-[10px] text-slate-500 font-medium bg-slate-50 border-t border-slate-100">Fondo Gris Claro</div>
+                </div>
+
+                <div class="border border-slate-100 rounded-xl overflow-hidden bg-polar shadow-sm">
+                    <div class="h-32 bg-map-dark flex items-center justify-center p-4">
+                        <img src="vectorpolaris-blanco.png" alt="Fondo Azul Oscuro" class="max-h-16 w-auto object-contain">
+                    </div>
+                    <div class="p-3 text-center text-[10px] text-white/50 font-medium bg-slate-900 border-t border-white/5">Fondo Azul Oscuro</div>
+                </div>
+
+                <div class="border border-slate-100 rounded-xl overflow-hidden bg-deep shadow-sm">
+                    <div class="h-32 bg-deep flex items-center justify-center p-4">
+                        <img src="vectorpolaris-blanco.png" alt="Fondo Azul Corp" class="max-h-16 w-auto object-contain">
+                    </div>
+                    <div class="p-3 text-center text-[10px] text-white/50 font-medium bg-slate-900 border-t border-white/5">Fondo Azul Profundo</div>
+                </div>
+            </div>
+
+            <h4 class="font-montserrat text-xs font-bold uppercase text-red-600 mb-4 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-red-600"></span>✗ Usos incorrectos
+            </h4>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 relative z-10">
+                <div class="border border-slate-100 rounded-xl overflow-hidden bg-white relative">
+                    <div class="absolute inset-0 bg-red-500/10 flex items-center justify-center pointer-events-none z-10">
+                        <div class="w-full h-[1.5px] bg-red-500 rotate-45 absolute"></div>
+                        <div class="w-full h-[1.5px] bg-red-500 -rotate-45 absolute"></div>
+                    </div>
+                    <div class="h-32 flex items-center justify-center p-4 scale-x-150">
+                        <img src="vectorpolarislogo.png" alt="Deformación" class="max-h-16 w-auto object-contain">
+                    </div>
+                    <div class="p-3 text-center text-[10px] text-red-700 font-semibold bg-red-50/50 border-t border-red-100">No Deformar</div>
+                </div>
+
+                <div class="border border-slate-100 rounded-xl overflow-hidden bg-white relative">
+                    <div class="absolute inset-0 bg-red-500/10 flex items-center justify-center pointer-events-none z-10">
+                        <div class="w-full h-[1.5px] bg-red-500 rotate-45 absolute"></div>
+                        <div class="w-full h-[1.5px] bg-red-500 -rotate-45 absolute"></div>
+                    </div>
+                    <div class="h-32 flex items-center justify-center p-4 filter hue-rotate-90">
+                        <img src="vectorpolarislogo.png" alt="Cambiar color" class="max-h-16 w-auto object-contain">
+                    </div>
+                    <div class="p-3 text-center text-[10px] text-red-700 font-semibold bg-red-50/50 border-t border-red-100">No Cambiar Colores</div>
+                </div>
+
+                <div class="border border-slate-100 rounded-xl overflow-hidden bg-white relative">
+                    <div class="absolute inset-0 bg-red-500/10 flex items-center justify-center pointer-events-none z-10">
+                        <div class="w-full h-[1.5px] bg-red-500 rotate-45 absolute"></div>
+                        <div class="w-full h-[1.5px] bg-red-500 -rotate-45 absolute"></div>
+                    </div>
+                    <div class="h-32 flex items-center justify-center p-4">
+                        <img src="vectorpolarislogo.png" alt="Sombra" class="max-h-16 w-auto object-contain drop-shadow-[0_8px_8px_rgba(0,0,0,0.5)]">
+                    </div>
+                    <div class="p-3 text-center text-[10px] text-red-700 font-semibold bg-red-50/50 border-t border-red-100">No Aplicar Sombras</div>
+                </div>
+
+                <div class="border border-slate-100 rounded-xl overflow-hidden bg-amber-500 relative">
+                    <div class="absolute inset-0 bg-red-500/10 flex items-center justify-center pointer-events-none z-10">
+                        <div class="w-full h-[1.5px] bg-red-500 rotate-45 absolute"></div>
+                        <div class="w-full h-[1.5px] bg-red-500 -rotate-45 absolute"></div>
+                    </div>
+                    <div class="h-32 flex items-center justify-center p-4">
+                        <img src="vectorpolarislogo.png" alt="Fondo Incorrecto" class="max-h-16 w-auto object-contain">
+                    </div>
+                    <div class="p-3 text-center text-[10px] text-red-700 font-semibold bg-red-50/50 border-t border-red-100">Evitar Fondos Cálidos</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 08 APLICACIONES -->
+        <section class="section" id="aplicaciones">
+            <div class="section-label font-montserrat text-[10px] tracking-[0.2em] uppercase text-corp font-bold mb-3 flex items-center gap-2">
+                <span class="w-6 h-[1.5px] bg-corp"></span>08
+            </div>
+            <h2 class="font-montserrat text-3xl font-bold text-polar mb-4">Ejemplos de Aplicación</h2>
+            <p class="text-base text-muted max-w-3xl leading-relaxed mb-10">
+                La marca cobra vida en aplicaciones corporativas consistentes. A continuación se presentan las guías y maquetas visuales para el uso cotidiano de Polaris Cooperation Group.
+            </p>
+
+            <div class="app-grid grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+                <!-- Firma de email -->
+                <div class="app-card border border-slate-100 rounded-xl bg-white shadow-sm overflow-hidden flex flex-col">
+                    <div class="bg-polar px-5 py-3 text-white font-montserrat text-xs font-semibold tracking-wider">Firma de Correo</div>
+                    <div class="p-6 flex-1 flex flex-col justify-center">
+                        <div class="border border-slate-200 p-5 rounded-lg flex items-center gap-6 bg-slate-50">
+                            <div>
+                                <!-- Logo destacado grande -->
+                                <img src="vectorpolarislogo.png" alt="Firma de Email Logo" class="h-14 w-auto object-contain">
+                            </div>
+                            <div class="h-16 w-[1px] bg-slate-200"></div>
+                            <div class="font-sans">
+                                <div class="text-xs font-bold text-polar font-montserrat">María Rossi</div>
+                                <div class="text-[10px] text-slate-500">Directora Ejecutiva</div>
+                                <div class="text-[10px] text-corp mt-1 font-mono">m.rossi@polariscooperationgroup.com | www.polariscooperationgroup.com</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Documento Institucional -->
+                <div class="app-card border border-slate-100 rounded-xl bg-white shadow-sm overflow-hidden flex flex-col">
+                    <div class="bg-polar px-5 py-3 text-white font-montserrat text-xs font-semibold tracking-wider">Portada de Documento</div>
+                    <div class="p-6 flex-1 flex justify-center items-center">
+                        <div class="border border-slate-200 rounded-lg w-64 shadow-md bg-white overflow-hidden">
+                            <div class="bg-polar p-4 flex justify-between items-center border-b border-slate-800">
+                                <!-- Logo mediano a grande -->
+                                <img src="vectorpolaris-blanco.png" alt="Doc Logo" class="h-10 w-auto">
+                                <span class="text-[8px] text-white/40 font-mono">CONFIDENCIAL</span>
+                            </div>
+                            <div class="p-4 space-y-3">
+                                <div class="h-3 bg-corp/20 rounded w-3/4"></div>
+                                <div class="h-2 bg-slate-100 rounded w-full"></div>
+                                <div class="h-2 bg-slate-100 rounded w-full"></div>
+                                <div class="h-2 bg-slate-100 rounded w-1/2"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Redes sociales -->
+                <div class="app-card border border-slate-100 rounded-xl bg-white shadow-sm overflow-hidden flex flex-col">
+                    <div class="bg-polar px-5 py-3 text-white font-montserrat text-xs font-semibold tracking-wider">LinkedIn Mockup</div>
+                    <div class="p-6 flex-1 flex flex-col justify-center">
+                        <div class="border border-slate-200 rounded-lg overflow-hidden bg-slate-50">
+                            <!-- Banner -->
+                            <div class="h-24 bg-map-dark relative">
+                                <div class="absolute -bottom-8 left-4 border-2 border-white rounded-full overflow-hidden bg-polar w-16 h-16 flex items-center justify-center">
+                                    <img src="vectorpolaris-blanco.png" alt="Profile Icon" class="h-10 w-auto">
+                                </div>
+                            </div>
+                            <div class="pt-10 px-4 pb-4 bg-white">
+                                <div class="text-xs font-bold text-polar font-montserrat">Polaris Cooperation Group</div>
+                                <div class="text-[9px] text-slate-500">Cooperación Internacional &amp; Comercio Exterior. Buenos Aires.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carta Membretada -->
+                <div class="app-card border border-slate-100 rounded-xl bg-white shadow-sm overflow-hidden flex flex-col">
+                    <div class="bg-polar px-5 py-3 text-white font-montserrat text-xs font-semibold tracking-wider">Papelería Carta</div>
+                    <div class="p-6 flex-1 flex justify-center items-center">
+                        <div class="border border-slate-200 rounded-lg w-64 shadow-md bg-white">
+                            <div class="p-4 border-b border-slate-100 flex justify-between items-center">
+                                <!-- Logo mediano a grande -->
+                                <img src="vectorpolarislogo.png" alt="Carta Logo" class="h-10 w-auto">
+                                <span class="text-[8px] text-slate-400 font-mono">Mayo, 2026</span>
+                            </div>
+                            <div class="p-4 space-y-2">
+                                <div class="h-[1px] bg-slate-200 w-full mb-4"></div>
+                                <div class="h-2 bg-slate-100 rounded w-full"></div>
+                                <div class="h-2 bg-slate-100 rounded w-full"></div>
+                                <div class="h-2 bg-slate-100 rounded w-5/6"></div>
+                                <div class="h-2 bg-slate-100 rounded w-4/6"></div>
+                            </div>
+                            <div class="p-3 border-t border-slate-100 flex justify-between text-[7px] text-slate-400">
+                                <span>polariscooperationgroup.com</span>
+                                <span>Buenos Aires, Argentina</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="bg-polar py-16 px-16 flex flex-col md:flex-row justify-between items-center border-t border-white/10 relative overflow-hidden">
+            <div class="absolute inset-0 opacity-5 pointer-events-none bg-map-pattern"></div>
+            <div class="flex items-center gap-4 mb-6 md:mb-0 relative z-10">
+                <img src="vectorpolaris-blanco.png" alt="Polaris Cooperation Group" class="h-14 w-auto object-contain">
+            </div>
+            <div class="text-right text-[11px] text-white/40 font-montserrat relative z-10">
+                <div>Manual de Marca · Versión 1.1 Rediseño · 2026</div>
+                <div>Documento estrictamente confidencial · Polaris Cooperation Group</div>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- PRINT BUTTON -->
+    <button class="print-btn fixed bottom-6 right-6 bg-corp text-white px-5 py-3 rounded-full shadow-lg hover:bg-deep transition-all duration-200 flex items-center gap-2 font-montserrat text-xs font-semibold tracking-wider z-[9999]" onclick="window.print()">
+        <svg width="14" height="14" fill="none" viewBox="0 0 16 16">
+            <rect x="3" y="1" width="10" height="5" rx="1" stroke="white" stroke-width="1.5" />
+            <rect x="1" y="6" width="14" height="7" rx="1" stroke="white" stroke-width="1.5" />
+            <rect x="4" y="10" width="8" height="4" rx="0.5" stroke="white" stroke-width="1.2" />
+        </svg>
+        Exportar PDF / Imprimir
+    </button>
+
+</body>
+
+</html>
