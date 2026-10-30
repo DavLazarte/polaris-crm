@@ -26,3 +26,8 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Archivos locales de referencia / documentación interna
+/PLAN_RADAR_N8N.md
+/RADAR*.json
+/radar.jpeg

@@ -2,9 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Models\Article;
+use App\Models\Convocatoria;
 use Illuminate\Http\Request;
 use App\Models\ContactMessage;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Controllers\RadarIngestaController;
 
 // Cambio de idioma
 Route::get('/lang/{locale}', function (Request $request, $locale) {
@@ -56,12 +58,57 @@ Route::get('/perspectivas', function () {
 })->name('news');
 
 Route::get('/radar', function () {
-    return view('radar');
+    $records = Convocatoria::where('is_published', true)
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+    $convocatorias = $records->map(function (Convocatoria $c) {
+        $plazo = $c->plazo_info;
+        $sectores = array_values(array_filter(array_unique(array_merge(
+            $c->sector_elegible ?? [],
+            $c->tipo_benef ?? []
+        ))));
+
+        $requisitos = $c->requisitos;
+        if (empty($requisitos)) {
+            $partes = [];
+            if (!empty($sectores)) {
+                $partes[] = 'Dirigido a: ' . implode(', ', $sectores) . '.';
+            }
+            if (!empty($c->alcance_region) || !empty($c->ambito_geo)) {
+                $alcance = implode(' · ', array_filter([$c->ambito_geo, $c->alcance_region]));
+                $partes[] = 'Alcance geográfico: ' . $alcance . '.';
+            }
+            $requisitos = !empty($partes) ? implode(' ', $partes) : 'Consultar bases y condiciones de la convocatoria.';
+        }
+
+        return [
+            'id' => $c->id,
+            'titulo' => (string) $c->titulo,
+            'argentina' => (bool) ($c->alcance_arg || $c->alcance_region === 'Argentina'),
+            'plazoTexto' => $plazo['texto'],
+            'plazoClase' => $plazo['clase'],
+            'organismo' => $c->organismo ?: ($c->ambito_geo ? 'Alcance ' . $c->ambito_geo : null),
+            'resumen' => (string) ($c->resumen ?? ''),
+            'tags' => is_array($c->ods) ? array_values($c->ods) : [],
+            'sector' => !empty($sectores) ? implode(', ', $sectores) : 'Múltiples sectores',
+            'modo' => (string) ($c->modalidad ?: 'Cooperación Internacional'),
+            'monto' => $c->monto_formateado,
+            'filtroTema' => $c->filtro_tema,
+            'urlOriginal' => !empty($c->link) ? $c->link : null,
+            'requisitos' => $requisitos,
+        ];
+    })->values()->all();
+
+    return view('radar', compact('convocatorias'));
 })->name('radar');
 
 Route::redirect('/convocatorias', '/radar');
 Route::redirect('/convocatorias.html', '/radar');
 Route::redirect('/radar.html', '/radar');
+
+// Endpoint de ingesta automatizada para n8n (Radar de Convocatorias)
+Route::post('/api/radar/ingesta', [RadarIngestaController::class, 'store'])->name('radar.ingesta');
 
 // Redirecciones para evitar 404 si entran con .html o /news
 Route::redirect('/index.html', '/');

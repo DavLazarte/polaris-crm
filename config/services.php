@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'radar' => [
+        'token' => env('RADAR_API_TOKEN', 'polaris-radar-2026'),
+    ],
+
 ];

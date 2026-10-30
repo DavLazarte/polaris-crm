@@ -303,7 +303,7 @@
         background: rgba(0, 4, 18, 0.78);
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
-        z-index: 10000;
+        z-index: 99999;
         display: flex; align-items: center; justify-content: center;
         padding: 20px;
         opacity: 0;
@@ -351,104 +351,7 @@
 @endpush
 
 @php
-$convocatorias = [
-    [
-        'id' => 1,
-        'titulo' => 'Adaptación climática en América Latina y el Caribe (AFCIA)',
-        'argentina' => false,
-        'plazoTexto' => 'Cierra en 6 días',
-        'plazoClase' => 'urge',
-        'organismo' => 'UN CTCN · Fondo de Adaptación',
-        'resumen' => 'Asistencia técnica para soluciones innovadoras de adaptación climática. Todos los países de la región son elegibles, con énfasis en soluciones transformadoras y de liderazgo local.',
-        'tags' => ['ODS 13'],
-        'sector' => 'Universidades / I+D',
-        'modo' => 'Asistencia técnica',
-        'monto' => 'Hasta USD 250.000',
-        'filtroTema' => 'clima',
-        'urlOriginal' => 'https://www.ctc-n.org',
-        'requisitos' => 'Postulación en consorcio con aval de la entidad nacional designada (NDA). Enfoque en resiliencia hídrica y bioeconomía.'
-    ],
-    [
-        'id' => 2,
-        'titulo' => 'I+D+i agroalimentaria — Convocatoria regional 2026',
-        'argentina' => false,
-        'plazoTexto' => 'Cierra en 22 días',
-        'plazoClase' => 'pronto',
-        'organismo' => 'FONTAGRO',
-        'resumen' => 'Consorcios regionales de investigación, desarrollo e innovación para aumentar la productividad y competitividad con menor huella ambiental en los sistemas agroalimentarios de la región.',
-        'tags' => ['ODS 2', 'ODS 9'],
-        'sector' => 'Universidades / I+D',
-        'modo' => 'Fondo Concursable',
-        'monto' => 'Hasta USD 400.000',
-        'filtroTema' => 'ciencia',
-        'urlOriginal' => 'https://www.fontagro.org',
-        'requisitos' => 'Participación mínima de 2 países miembros de FONTAGRO. Co-financiamiento en especies aceptado.'
-    ],
-    [
-        'id' => 3,
-        'titulo' => 'Cooperación científica Argentina–Francia (ECOS-Sud)',
-        'argentina' => true,
-        'plazoTexto' => 'Cierra en 60 días',
-        'plazoClase' => 'amplio',
-        'organismo' => 'Secretaría de Ciencia y Tecnología · Embajada de Francia',
-        'resumen' => 'Proyectos de investigación conjunta entre grupos argentinos y franceses, por dos años. Financia la movilidad de investigadores en formación doctoral y posdoctoral, en todas las áreas del conocimiento.',
-        'tags' => ['ODS 9', 'ODS 17'],
-        'sector' => 'Universidades / I+D',
-        'modo' => 'Cooperación Bilateral',
-        'monto' => 'Movilidad & Estadías',
-        'filtroTema' => 'ciencia',
-        'urlOriginal' => 'https://www.ecos-sud.univ-paris13.fr',
-        'requisitos' => 'Equipo de investigación binacional constituido. Presentación simultánea en Argentina y Francia.'
-    ],
-    [
-        'id' => 4,
-        'titulo' => 'Pequeñas subvenciones sobre género y ambiente',
-        'argentina' => false,
-        'plazoTexto' => 'Cierra en 18 días',
-        'plazoClase' => 'pronto',
-        'organismo' => 'ONU Mujeres',
-        'resumen' => 'Organizaciones de la sociedad civil lideradas por o al servicio de mujeres con discapacidad o comunidades vulnerables en territorio. Hasta USD 15.000 por organización, proyectos de hasta siete meses.',
-        'tags' => ['ODS 5', 'ODS 13'],
-        'sector' => 'ONG / Tercer sector',
-        'modo' => 'No reembolsable',
-        'monto' => 'USD 15.000',
-        'filtroTema' => 'genero',
-        'urlOriginal' => 'https://www.unwomen.org',
-        'requisitos' => 'Personería jurídica al día y mínimo 2 años de experiencia territorial comprobable.'
-    ],
-    [
-        'id' => 5,
-        'titulo' => 'Infraestructura climática y transición ecológica subnacional',
-        'argentina' => true,
-        'plazoTexto' => 'Convocatoria abierta',
-        'plazoClase' => 'abierta',
-        'organismo' => 'Programa de cooperación descentralizada UE-América Latina',
-        'resumen' => 'Proyectos medianos de energía sostenible, gestión de residuos, saneamiento y agricultura regenerativa. Fondos de US$ 5.000 a 75.000, dirigidos específicamente a gobiernos locales.',
-        'tags' => ['ODS 7', 'ODS 11'],
-        'sector' => 'Gobierno subnacional',
-        'modo' => 'No reembolsable',
-        'monto' => 'USD 5.000 a 75.000',
-        'filtroTema' => 'clima',
-        'urlOriginal' => 'https://ec.europa.eu',
-        'requisitos' => 'Municipios o consorcios de municipios con ordenanza de adhesión a metas climáticas.'
-    ],
-    [
-        'id' => 6,
-        'titulo' => 'Horizonte Europa: Alianzas Bioeconomía y Economía Circular',
-        'argentina' => false,
-        'plazoTexto' => 'Cierra en 45 días',
-        'plazoClase' => 'amplio',
-        'organismo' => 'Comisión Europea (Horizon Europe Cluster 6)',
-        'resumen' => 'Financiamiento directo para instituciones de investigación y empresas de Latinoamérica que se integren a consorcios europeos para el desarrollo de biotecnología y valorización de biomasa.',
-        'tags' => ['ODS 9', 'ODS 12'],
-        'sector' => 'Consorcios Mixtos',
-        'modo' => 'No reembolsable',
-        'monto' => 'Hasta EUR 1.500.000',
-        'filtroTema' => 'ciencia',
-        'urlOriginal' => 'https://ec.europa.eu/info/funding-tenders',
-        'requisitos' => 'Consorcio internacional con al menos 3 países europeos y socios de terceros países asociados.'
-    ]
-];
+$convocatorias = $convocatorias ?? [];
 @endphp
 
 @section('content')
@@ -501,12 +404,13 @@ $convocatorias = [
 
         <!-- Lista de Tarjetas Convocatorias (Renderizadas en Servidor) -->
         <div class="convocatorias-lista" id="convocatoriasLista">
-            @foreach($convocatorias as $c)
+            @forelse($convocatorias as $c)
                 @php
                     $isNoReembolsable = str_contains(mb_strtolower($c['modo']), 'no reembolsable');
-                    $searchIndex = mb_strtolower($c['titulo'] . ' ' . $c['organismo'] . ' ' . $c['resumen'] . ' ' . implode(' ', $c['tags']) . ' ' . $c['sector']);
+                    $searchIndex = mb_strtolower($c['titulo'] . ' ' . ($c['organismo'] ?? '') . ' ' . $c['resumen'] . ' ' . implode(' ', $c['tags']) . ' ' . $c['sector']);
                 @endphp
                 <article class="tarjeta-convocatoria" 
+                         onclick="openRadarModal({{ $c['id'] }})"
                          data-id="{{ $c['id'] }}" 
                          data-tema="{{ $c['filtroTema'] }}" 
                          data-modo="{{ $isNoReembolsable ? 'no_reembolsable' : 'otro' }}" 
@@ -522,10 +426,12 @@ $convocatorias = [
                         <span class="badge-plazo {{ $c['plazoClase'] }}">{{ $c['plazoTexto'] }}</span>
                     </div>
 
-                    <div class="tarjeta-org">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v4M12 14v4M16 14v4"/></svg>
-                        <span>{{ $c['organismo'] }}</span>
-                    </div>
+                    @if(!empty($c['organismo']))
+                        <div class="tarjeta-org">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v4M12 14v4M16 14v4"/></svg>
+                            <span>{{ $c['organismo'] }}</span>
+                        </div>
+                    @endif
 
                     <p class="tarjeta-resumen">{{ $c['resumen'] }}</p>
 
@@ -538,10 +444,14 @@ $convocatorias = [
                         @if(!empty($c['monto']))
                             <span class="tag-pill monto">{{ $c['monto'] }}</span>
                         @endif
-                        <a href="javascript:void(0)" class="ver-btn">{{ __('Ver detalle →') }}</a>
+                        <a href="javascript:void(0)" onclick="event.stopPropagation(); openRadarModal({{ $c['id'] }});" class="ver-btn">{{ __('Ver detalle →') }}</a>
                     </div>
                 </article>
-            @endforeach
+            @empty
+                <div style="text-align: center; padding: 60px 20px; color: var(--radar-gris-tenue); background: white; border-radius: 16px; border: 1px solid var(--radar-borde);">
+                    <p style="font-size: 1.05rem; font-weight: 600;">{{ __('No hay convocatorias publicadas en este momento.') }}</p>
+                </div>
+            @endforelse
 
             <!-- Estado Vacío -->
             <div id="radarEmptyState" style="display: none; text-align: center; padding: 60px 20px; color: var(--radar-gris-tenue);">
@@ -555,9 +465,9 @@ $convocatorias = [
     <!-- ═════════════════════════════════════════════════════════════
          MODAL DETALLE DE CONVOCATORIA (Nativo Vanilla JS)
          ═════════════════════════════════════════════════════════════ -->
-    <div class="radar-modal-overlay" id="radarModal" role="dialog" aria-modal="true">
+    <div class="radar-modal-overlay" id="radarModal" role="dialog" aria-modal="true" onclick="if(event.target === this) closeRadarModal()">
         <div class="radar-modal-card">
-            <button type="button" class="radar-modal-close" id="radarModalClose" aria-label="Cerrar">✕</button>
+            <button type="button" class="radar-modal-close" id="radarModalClose" onclick="closeRadarModal()" aria-label="Cerrar">✕</button>
 
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                 <span class="badge-plazo" id="modalPlazo"></span>
@@ -634,7 +544,7 @@ $convocatorias = [
     const modalUrl        = document.getElementById('modalUrl');
 
     function openRadarModal(id) {
-        const item = convocatoriasData.find(c => c.id === Number(id));
+        const item = convocatoriasData.find(c => Number(c.id) === Number(id));
         if (!item) return;
 
         modalPlazo.textContent = item.plazoTexto;
@@ -646,15 +556,29 @@ $convocatorias = [
             modalBadgeArg.style.display = 'none';
         }
 
-        modalTitulo.textContent     = item.titulo;
-        modalOrg.textContent        = item.organismo;
+        modalTitulo.textContent = item.titulo;
+
+        if (item.organismo) {
+            modalOrg.textContent = item.organismo;
+            modalOrg.style.display = 'block';
+        } else {
+            modalOrg.textContent = '';
+            modalOrg.style.display = 'none';
+        }
+
         modalResumen.textContent    = item.resumen;
         modalMonto.textContent      = item.monto || 'A definir';
         modalModo.textContent       = item.modo;
         modalSector.textContent     = item.sector;
-        modalTags.textContent       = item.tags.join(', ');
+        modalTags.textContent       = (item.tags && item.tags.length) ? item.tags.join(', ') : 'General';
         modalRequisitos.textContent = item.requisitos;
-        modalUrl.href               = item.urlOriginal;
+
+        if (item.urlOriginal) {
+            modalUrl.href = item.urlOriginal;
+            modalUrl.style.display = 'inline-flex';
+        } else {
+            modalUrl.style.display = 'none';
+        }
 
         modalOverlay.classList.add('open');
         document.body.style.overflow = 'hidden';

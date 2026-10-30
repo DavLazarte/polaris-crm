@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->validateCsrfTokens(except: [
             '/contacto/enviar',
+            '/api/radar/ingesta',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
