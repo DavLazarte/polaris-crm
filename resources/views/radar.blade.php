@@ -627,7 +627,7 @@ $convocatorias = $convocatorias ?? [];
     const loadMoreBtn = document.getElementById('radarLoadMoreBtn');
     const remainingSpan = document.getElementById('radarRemainingCount');
 
-    const PAGE_SIZE = 15;
+    const PAGE_SIZE = 5;
     let visibleLimit = PAGE_SIZE;
     let currentFilter = 'todas';
 

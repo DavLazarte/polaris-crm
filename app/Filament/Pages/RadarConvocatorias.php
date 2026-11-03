@@ -6,7 +6,7 @@ use Filament\Pages\Page;
 
 class RadarConvocatorias extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-signal';
+    protected static bool $shouldRegisterNavigation = false;
     protected static ?string $navigationLabel = 'Radar de Convocatorias (API)';
     protected static ?string $title = 'Radar de Convocatorias Internacionales';
     protected static ?string $navigationGroup = 'Contenido';
