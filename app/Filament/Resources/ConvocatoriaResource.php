@@ -172,8 +172,8 @@ class ConvocatoriaResource extends Resource
                 Tables\Columns\TextColumn::make('titulo')
                     ->label('Convocatoria')
                     ->searchable()
-                    ->limit(50)
-                    ->description(fn (Convocatoria $record): string => $record->organismo ?: ($record->presup_texto ?: 'Sin organismo especificado')),
+                    ->wrap()
+                    ->description(fn (Convocatoria $record): string => $record->organismo ?: ($record->presup_texto ?: 'Sin organismo')),
 
                 Tables\Columns\TextColumn::make('modalidad')
                     ->label('Modalidad')
@@ -202,7 +202,7 @@ class ConvocatoriaResource extends Resource
                     ->sortable(),
 
                 Tables\Columns\IconColumn::make('requiere_revision_vigencia')
-                    ->label('Rev. Vigencia')
+                    ->label('Rev. Vig.')
                     ->boolean()
                     ->trueIcon('heroicon-o-exclamation-triangle')
                     ->falseIcon('heroicon-o-check-circle')
@@ -210,7 +210,7 @@ class ConvocatoriaResource extends Resource
                     ->falseColor('success'),
 
                 Tables\Columns\TextColumn::make('score_conf')
-                    ->label('Score IA')
+                    ->label('Confianza')
                     ->badge()
                     ->color(fn ($state): string => $state === null ? 'gray' : ($state >= 0.8 ? 'success' : ($state >= 0.5 ? 'warning' : 'danger'))),
 
@@ -230,10 +230,26 @@ class ConvocatoriaResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('descartar')
+                    ->label('Descartar')
+                    ->icon('heroicon-o-no-symbol')
+                    ->color('danger')
+                    ->visible(fn (Convocatoria $record): bool => $record->is_published)
+                    ->action(fn (Convocatoria $record) => $record->update(['is_published' => false])),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('publicar_seleccionadas')
+                        ->label('Publicar seleccionadas')
+                        ->icon('heroicon-o-check')
+                        ->color('success')
+                        ->action(fn (\Illuminate\Database\Eloquent\Collection $records) => $records->each->update(['is_published' => true])),
+                    Tables\Actions\BulkAction::make('descartar_seleccionadas')
+                        ->label('Descartar seleccionadas (Ocultar)')
+                        ->icon('heroicon-o-eye-slash')
+                        ->color('warning')
+                        ->action(fn (\Illuminate\Database\Eloquent\Collection $records) => $records->each->update(['is_published' => false])),
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);

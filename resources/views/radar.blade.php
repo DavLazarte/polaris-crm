@@ -460,6 +460,13 @@ $convocatorias = $convocatorias ?? [];
             </div>
         </div>
 
+        <!-- Paginación Frontend (Cargar más) -->
+        <div id="radarLoadMoreWrap" style="text-align: center; margin-top: 36px; display: none;">
+            <button type="button" id="radarLoadMoreBtn" style="padding: 12px 32px; border-radius: 50px; background: #000412; color: #ffffff; border: 1.5px solid #000412; font-family: 'Montserrat', sans-serif; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: all 0.25s; box-shadow: 0 4px 15px rgba(0,4,18,0.15);">
+                {{ __('Cargar más convocatorias') }} (<span id="radarRemainingCount">0</span>)
+            </button>
+        </div>
+
     </div>
 
     <!-- ═════════════════════════════════════════════════════════════
@@ -611,28 +618,32 @@ $convocatorias = $convocatorias ?? [];
         });
     });
 
-    // ── BUSCADOR Y CHIPS DE FILTRO ────────────────────────────────
+    // ── BUSCADOR Y CHIPS DE FILTRO CON PAGINACIÓN PROGRESIVA ─────
     const searchInput = document.getElementById('radarSearch');
     const chipButtons = document.querySelectorAll('.chip-btn');
     const emptyState  = document.getElementById('radarEmptyState');
     const resetBtn    = document.getElementById('resetFiltersBtn');
+    const loadMoreWrap = document.getElementById('radarLoadMoreWrap');
+    const loadMoreBtn = document.getElementById('radarLoadMoreBtn');
+    const remainingSpan = document.getElementById('radarRemainingCount');
+
+    const PAGE_SIZE = 15;
+    let visibleLimit = PAGE_SIZE;
     let currentFilter = 'todas';
 
     function filterCards() {
         const term = (searchInput ? searchInput.value : '').trim().toLowerCase();
-        const cards = document.querySelectorAll('.tarjeta-convocatoria');
-        let visibleCount = 0;
-
-        cards.forEach(card => {
+        const cards = Array.from(document.querySelectorAll('.tarjeta-convocatoria'));
+        
+        // 1. Filtrar coincidencias
+        const matchingCards = cards.filter(card => {
             const tema = card.getAttribute('data-tema');
             const modo = card.getAttribute('data-modo');
             const isArg = card.getAttribute('data-argentina') === 'true';
             const searchIndex = card.getAttribute('data-search') || '';
 
-            // Validación de búsqueda de texto
             const matchesSearch = !term || searchIndex.includes(term);
 
-            // Validación de chip de categoría
             let matchesCategory = false;
             if (currentFilter === 'todas') matchesCategory = true;
             else if (currentFilter === 'clima' && tema === 'clima') matchesCategory = true;
@@ -641,17 +652,46 @@ $convocatorias = $convocatorias ?? [];
             else if (currentFilter === 'no_reembolsable' && modo === 'no_reembolsable') matchesCategory = true;
             else if (currentFilter === 'argentina' && isArg) matchesCategory = true;
 
-            if (matchesSearch && matchesCategory) {
-                card.style.display = 'block';
-                visibleCount++;
-            } else {
-                card.style.display = 'none';
-            }
+            return matchesSearch && matchesCategory;
         });
 
+        // 2. Ocultar todas primero
+        cards.forEach(card => card.style.display = 'none');
+
+        // 3. Mostrar solo hasta visibleLimit de las que coinciden
+        const toShow = matchingCards.slice(0, visibleLimit);
+        toShow.forEach(card => card.style.display = 'block');
+
+        // 4. Manejo de estado vacío
         if (emptyState) {
-            emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+            emptyState.style.display = matchingCards.length === 0 ? 'block' : 'none';
         }
+
+        // 5. Manejo del botón "Cargar más"
+        if (loadMoreWrap) {
+            const remaining = matchingCards.length - toShow.length;
+            if (remaining > 0) {
+                loadMoreWrap.style.display = 'block';
+                if (remainingSpan) remainingSpan.textContent = remaining;
+            } else {
+                loadMoreWrap.style.display = 'none';
+            }
+        }
+    }
+
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', function() {
+            visibleLimit += PAGE_SIZE;
+            filterCards();
+        });
+        loadMoreBtn.addEventListener('mouseover', function() {
+            this.style.background = '#3057be';
+            this.style.borderColor = '#3057be';
+        });
+        loadMoreBtn.addEventListener('mouseout', function() {
+            this.style.background = '#000412';
+            this.style.borderColor = '#000412';
+        });
     }
 
     chipButtons.forEach(btn => {
@@ -659,18 +699,23 @@ $convocatorias = $convocatorias ?? [];
             chipButtons.forEach(b => b.classList.remove('active'));
             this.classList.add('active');
             currentFilter = this.getAttribute('data-filter');
+            visibleLimit = PAGE_SIZE; // reset a 1ra página al cambiar filtro
             filterCards();
         });
     });
 
     if (searchInput) {
-        searchInput.addEventListener('input', filterCards);
+        searchInput.addEventListener('input', function() {
+            visibleLimit = PAGE_SIZE; // reset a 1ra página al buscar
+            filterCards();
+        });
     }
 
     if (resetBtn) {
         resetBtn.addEventListener('click', function() {
             if (searchInput) searchInput.value = '';
             currentFilter = 'todas';
+            visibleLimit = PAGE_SIZE;
             chipButtons.forEach(b => {
                 if (b.getAttribute('data-filter') === 'todas') b.classList.add('active');
                 else b.classList.remove('active');
@@ -678,6 +723,10 @@ $convocatorias = $convocatorias ?? [];
             filterCards();
         });
     }
+
+    // Ejecutar paginación inicial al cargar la página
+    document.addEventListener('DOMContentLoaded', filterCards);
+    filterCards();
 </script>
 @endpush
 

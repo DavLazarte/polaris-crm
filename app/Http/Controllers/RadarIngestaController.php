@@ -124,13 +124,34 @@ class RadarIngestaController extends Controller
                 $existing = $query->first();
             }
 
+            // Reglas de publicación automática más estrictas:
+            // 1. Si explícitamente viene es_convocatoria === false (del prompt de Andrés)
+            $esConvocatoria = isset($item['es_convocatoria']) ? (bool) $item['es_convocatoria'] : true;
+            
+            // 2. Descarte por palabras clave típicas de venta/adquisición de bienes
+            $textoLower = mb_strtolower($titulo . ' ' . ($item['resumen'] ?? ''));
+            $esVentaBienes = str_contains($textoLower, 'venta de vehículo') ||
+                             str_contains($textoLower, 'venta de vehiculo') ||
+                             str_contains($textoLower, 'subasta de vehículo') ||
+                             str_contains($textoLower, 'subasta de vehiculo') ||
+                             str_contains($textoLower, 'adquisición de vehículo') ||
+                             str_contains($textoLower, 'compra de insumos') ||
+                             str_contains($textoLower, 'vacante de empleo') ||
+                             str_contains($textoLower, 'puesto de trabajo');
+
+            // 3. Región fuera de alcance o sin modalidad definida
+            $esFueraDeRegion = ($item['alcance_region'] ?? '') === 'Fuera de región';
+
+            // Determinar si califica para publicarse solo:
+            $calificaParaPublicar = !$requiereRevision && $esConvocatoria && !$esVentaBienes && !$esFueraDeRegion;
+
             if ($existing) {
+                // Si el usuario ya la había modificado manualmente en el admin, no le sobreescribimos is_published
                 $existing->update($data);
                 $updated++;
                 $savedIds[] = $existing->id;
             } else {
-                // Se publica automáticamente salvo que requiera revisión de vigencia
-                $data['is_published'] = !$requiereRevision;
+                $data['is_published'] = $calificaParaPublicar;
                 $conv = Convocatoria::create($data);
                 $created++;
                 $savedIds[] = $conv->id;
